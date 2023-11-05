@@ -1,15 +1,28 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import sanjayImage from "./Sanjay.jpg";
 
 const UserHome = () => {
-  const Logout=()=>{
-    navigate('/')
-    localStorage.clear()
-  }
   const navigate = useNavigate();
+
+  const Logout = () => {
+    navigate("/");
+    localStorage.clear();
+  };
+
   return (
-    <div>
-      <div className="main flex flex-col items-center justify-center">
+    <div
+      style={{
+        height: "100vh",
+        backgroundImage: `url(${sanjayImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div className="flex flex-col items-center justify-center">
         <div onClick={Logout}>
           <button className="btn btn-lg btn-danger mt-3">
             <i className="fa-solid fa-right-from-bracket"></i>Logout{" "}
@@ -46,18 +59,39 @@ const UserHome = () => {
               navigate("/report-incident");
             }}
           ></button>
-          {/* call icons */}
-          <button className="btn home-call-btns">
-            <a href="tel:8977011167" className="text-sm">
-              <i className="fa-solid fa-phone"></i> Call incharge-1
-            </a>
-          </button>
+         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <div
+    style={{
+      background: 'rgba(255, 255, 255, 0.7)',
+      padding: '20px',
+      borderRadius: '10px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+      margin: '20px',
+    }}
+  >
+    <button className="btn home-call-btns" style={{ backgroundColor: 'green', border: 'none' }}>
+      <a href="tel:8977011167" className="text-sm text-white" style={{ textDecoration: 'none' }}>
+        <i className="fa-solid fa-phone"></i> Call incharge-1
+      </a>
+    </button>
+  </div>
+  <div
+    style={{
+      background: 'rgba(255, 255, 255, 0.7)',
+      padding: '20px',
+      borderRadius: '10px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+      margin: '20px',
+    }}
+  >
+    <button className="btn home-call-btns" style={{ backgroundColor: 'green', border: 'none' }}>
+      <a href="tel:8977011167" className="text-sm text-white" style={{ textDecoration: 'none' }}>
+        <i className="fa-solid fa-phone"></i> Call incharge-2
+      </a>
+    </button>
+  </div>
+</div>
 
-          <button className="btn home-call-btns">
-            <a href="tel:8977011167" className="text-sm">
-              <i className="fa-solid fa-phone"></i> Call incharge-2
-            </a>
-          </button>
         </div>
       </div>
     </div>

@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+type User = {
+  _id: string;
+  name: string;
+  email: string;
+  // Add other necessary fields here
+};
+
 const AllKaryakartha = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://localhost:1001/getusers/${localStorage.getItem('id')}`); // Replace with your API endpoint
         setUsers(response.data.data);
-        console.log(response.data.data)
+        console.log(response.data.data);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -19,16 +26,28 @@ const AllKaryakartha = () => {
   }, []);
 
   return (
-    <div>
-      <h1>All Karyakartha</h1>
-      <ul>
-        {users.map((user:any) => (
-         <div className='card'>
-             <li key={user._id}>{user.name} - {user.email}</li>
-             {/* <li>{users}</li> */}
-         </div>
+    <div style={{ background: 'linear-gradient(135deg, orange, lemonchiffon)', minHeight: '100vh', padding: '50px' }}>
+      <h1 style={{ textAlign: 'center', fontSize: '2.5rem', marginBottom: '40px', color: '#333' }}>All Karyakartha</h1>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+        {users.map((user) => (
+          <div
+            key={user._id}
+            style={{
+              width: '300px',
+              padding: '20px',
+              borderRadius: '10px',
+              backgroundColor: 'lightgoldenrodyellow',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+              transition: 'transform 0.3s',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <p style={{ fontSize: '1.4rem', fontWeight: 'bold', color: 'darkorange', marginBottom: '10px' }}>{user.name}</p>
+              <p style={{ fontSize: '1.2rem', color: '#555' }}>{user.email}</p>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
