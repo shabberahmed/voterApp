@@ -140,8 +140,12 @@ import { useNavigate } from 'react-router-dom';
 import backgroundImage from './Mobilebjp.jpg'; // Update the image path accordingly
 import logo from './Bjplogo.png';
 import SanjayImage from './Sanjay.jpg';
+import axios, { AxiosError } from 'axios';
 
 const UserLogin = () => {
+  const handleSuccessfulLogin = (token: string) => {
+        localStorage.setItem('userToken', token);
+      };
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
@@ -155,15 +159,37 @@ const UserLogin = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    // Temporarily disabling the API call and redirecting to the home page
-    setTimeout(() => {
-      navigate('/home', { replace: true }); // Redirect to the home page and replace the current entry
-    }, 2000); // Simulating a loading time of 2 seconds
-  };
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsLoading(true);
+    
+        try {
+          const response = await axios.post('http://localhost:1001/admin/login', formData);
+          const token = (response.data as { token: string }).token; // Type assertion
+          localStorage.setItem("username", (response.data as { name: string }).name);
+          localStorage.setItem("id", (response.data as { id: string }).id);
+          handleSuccessfulLogin(token);
+          if ((response.data as { role: string }).role === "admin") {
+            navigate('/admin/page');
+          } else {
+            navigate('/home');
+          }
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            const axiosError = error as AxiosError;
+            if (axiosError.response && axiosError.response.data) {
+              setError((axiosError.response.data as { message: string }).message);
+            } else {
+              setError('An error occurred during the login process. Please try again later.');
+            }
+          } else {
+            setError('An unknown error occurred. Please try again later.');
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      };
+    
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -239,7 +265,7 @@ const UserLogin = () => {
           </button>
         </form>
         <p style={{ marginTop: 10, textAlign: "center", fontSize: '1.2em' }}>
-          Don't have an account? <a href="/user/signup">Signup</a>.
+          Don't have an account? <a href="/Askleader">Signup</a>.
         </p>
       </div>
     </div>

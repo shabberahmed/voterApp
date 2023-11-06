@@ -6,12 +6,14 @@ import backgroundImage from "./background.jpg";
 import logo from './Bjplogo.png';
 
 const Signup = () => {
+  const [isSignedUp, setIsSignedUp] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     mobile: '',
+    oid:''
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -19,7 +21,7 @@ const Signup = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false); // Simulating a loading time of 2 seconds
-    }, 2000);
+    }, 1000);
 
     return () => clearTimeout(timer); // Clear timeout on component unmount
   }, []);
@@ -31,10 +33,15 @@ const Signup = () => {
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-
+   
     try {
       const response = await axios.post('http://localhost:1001/user/signup', formData);
+      setIsSignedUp(true);
       console.log(response.data);
+      setTimeout(() => {
+        navigate('/admin/page', { replace: true }); // Redirect to the home page and replace the current entry
+      }, 2000); // Simulating a loading time of 2 seconds
+  
       // You can redirect the user to a success page or do other actions here.
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -69,6 +76,7 @@ const Signup = () => {
   }
 
   return (
+    
     <div
       style={{
         height: "100vh",
@@ -129,6 +137,18 @@ const Signup = () => {
               style={{ fontSize: '1.2em', padding: 10, marginBottom: 10, borderRadius: 5 }}
             />
           </div>
+          <div className="mb-2">
+  <input
+    type="text"
+    className="form-control"
+    placeholder="OID"
+    name="oid" // Update the name attribute to "oid"
+    value={formData.oid}
+    onChange={handleChange}
+    style={{ fontSize: '1.2em', padding: 10, marginBottom: 10, borderRadius: 5 }}
+  />
+</div>
+
           <button type="submit" className="btn bg-blue-400" style={{ width: '100%', fontSize: '1.2em', padding: 10, borderRadius: 5 }}>
             Sign Up
           </button>
@@ -137,7 +157,16 @@ const Signup = () => {
           Already a member? <a href="/">Login</a>.
         </p>
       </div>
+      {isSignedUp && (
+        <p
+          className="animate__animated animate__fadeIn" // Add the CSS animation classes
+          style={{ marginTop: 10, textAlign: 'center', fontSize: '1.2em' }}
+        >
+          User successfully signed up!
+        </p>
+      )}
     </div>
+    
   );
 };
 

@@ -14,41 +14,46 @@ const UserPageDataPrint = () => {
   const [house, setHouse] = useState('');
   const [voterId, setVoterId] = useState('');
   const [filteredData, setFilteredData] = useState<any[]>([]);
-  const [reEnteredName, setReEnteredName] = useState('');
-
 
   const handleSearch = () => {
-    const matchedData = data.find(
-      (voter) =>
-        (voter.FM_NAME_EN.toLowerCase() === name.toLowerCase() ||
-          voter.PART_NO.toString().toLowerCase() === booth.toLowerCase() ||
-          voter.C_HOUSE_NO.toString().toLowerCase() === house.toLowerCase() ||
-          voter.EPIC_NO.toString().toLowerCase() === voterId.toLowerCase()) &&
-        voter.FM_NAME_EN.toLowerCase() === reEnteredName.toLowerCase()
+    const searchTerms = name.split(" ");
+  
+    const filteredResults = data.filter((voter) =>
+      searchTerms.every((term) =>
+        Object.values(voter).some(
+          (value) =>
+            typeof value === "string" &&
+            value.toLowerCase().includes(term.toLowerCase())
+        )
+      )
     );
-
-    if (matchedData) {
-      setFilteredData([matchedData]);
-      axios
-        .post('http://localhost:1001/post/form', {
-          name: matchedData.FM_NAME_EN + ' ' + matchedData.LASTNAME_EN,
-          vid: matchedData.EPIC_NO,
-          partno: matchedData.PART_NO,
-          tel: matchedData.C_HOUSE_NO,
-          user: localStorage.getItem('username'),
-          id: localStorage.getItem('id'),
-        })
-        .then((response) => {
-          console.log('Data saved successfully', response);
-        })
-        .catch((error) => {
-          console.error('Error saving data:', error);
-        });
+  
+    if (filteredResults.length > 0) {
+      setFilteredData(filteredResults);
+  
+      // Send API request to save data
+      filteredResults.forEach((matchedData) => {
+        axios
+          .post("http://localhost:1001/post/form", {
+            name: matchedData.FM_NAME_EN + " " + matchedData.LASTNAME_EN,
+            vid: matchedData.EPIC_NO,
+            partno: matchedData.PART_NO,
+            tel: matchedData.C_HOUSE_NO,
+            user: localStorage.getItem("username"),
+            id: localStorage.getItem("id"),
+          })
+          .then((response) => {
+            console.log("Data saved successfully", response);
+          })
+          .catch((error) => {
+            console.error("Error saving data:", error);
+          });
+      });
     } else {
       setFilteredData([]);
     }
   };
-
+  
   const generatePDF = (voter: any) => {
     const input = pdfRef.current;
   
@@ -183,13 +188,13 @@ const UserPageDataPrint = () => {
             value={house}
             onChange={(e) => setHouse(e.target.value)}
           />
-          <input
+          {/* <input
   type="text"
   className="form-control me-2 mt-5"
   placeholder="Re-Enter the Voter Name"
   value={reEnteredName}
   onChange={(e) => setReEnteredName(e.target.value)}
-/>
+/> */}
 
           {filteredData.map((voter, index) => (
             <div key={index} onClick={() => handleHouseClick(voter.C_HOUSE_NO)}>

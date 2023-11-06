@@ -7,9 +7,10 @@ import UserHome from './components/UserHome'
 import UserPageDataPrint from './components/UserPageDataPrint'
 import AdminPage from './components/AdminPage'
 import ListOfkaryakartha from './components/ListOfkaryakartha'
-import AllKaryakartha from './components/AllKaryakartha'
+import Askleader from './components/Askleader'
 import Reportincident from './components/Report-incident'
 import Reportvoter from './components/ReportVoter'
+import Allforms from './components/Allforms'
 
 const App = () => {
   return (
@@ -27,7 +28,8 @@ const App = () => {
         <Route path='/report-incident' element={<Reportincident/>}></Route>
         <Route path='/report-voter' element={<Reportvoter/>}></Route>
         <Route path='/list' element={<ListOfkaryakartha/>}></Route>
-        <Route path='/all' element={<AllKaryakartha/>}></Route>
+        <Route path='/Askleader' element={< Askleader/>}></Route>
+        <Route path='/all' element={<Allforms/>}></Route>
 
       </Routes>
       </BrowserRouter>

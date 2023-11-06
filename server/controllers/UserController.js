@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import AuthModel from "../models/AuthModel.js";
 import UserModel from "../models/UserModel.js";
-import bcrypt from 'bcrypt'
-import Jwt from 'jsonwebtoken'
-const secretKey = 'your-secret-key';
+import bcrypt from "bcrypt";
+import Jwt from "jsonwebtoken";
+const secretKey = "your-secret-key";
 
 export const userSignUp = async (req, res) => {
   const { name, email, password, mobile, oid } = req.body; // dailyLocations is allowed to be empty or not provided
@@ -12,7 +12,7 @@ export const userSignUp = async (req, res) => {
     const checkEmail = await UserModel.findOne({ email });
 
     if (checkEmail) {
-      return res.json({ message: 'Email id already exists' });
+      return res.json({ message: "Email id already exists" });
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -23,7 +23,6 @@ export const userSignUp = async (req, res) => {
       password: hash,
       mobile,
       oid,
-
     });
 
     await newUser.save();
@@ -31,13 +30,13 @@ export const userSignUp = async (req, res) => {
     const RootUser = await AuthModel.findById(oid);
     // console.log(RootUser)
     if (RootUser) {
-      console.log(RootUser, 'if')
+      console.log(RootUser, "if");
       RootUser.users.push(newUser._id); // Push the new user's _id to RootUser's users array
       await RootUser.save();
-      return res.json({ message: 'User signup successful' });
+      return res.json({ message: "User signup successful" });
     } else {
-      console.log(RootUser, "else")
-      return res.json({ message: 'RootUser not found' });
+      console.log(RootUser, "else");
+      return res.json({ message: "RootUser not found" });
     }
   } catch (err) {
     console.error(`Error from user signup controller: ${err.message}`);
@@ -48,29 +47,31 @@ export const userSignIn = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const checkEmail = await UserModel.findOne({ email })
+    const checkEmail = await UserModel.findOne({ email });
     if (checkEmail) {
-      let checkPassword = checkEmail.password
-      if (checkPassword = password) {
-        const token = Jwt.sign({ email }, secretKey, { expiresIn: '10h' })
-        res.json({ m: "ok", token: token, name: checkEmail.name ,id:checkEmail.id})
+      let checkPassword = checkEmail.password;
+      if ((checkPassword = password)) {
+        const token = Jwt.sign({ email }, secretKey, { expiresIn: "10h" });
+        res.json({
+          m: "ok",
+          token: token,
+          name: checkEmail.name,
+          id: checkEmail.id,
+        });
+      } else {
+        res.json({ m: "wrong password" });
       }
-      else {
-        res.json({ m: "wrong password" })
-      }
+    } else {
+      res.json({ m: "invalid email" });
     }
-    else {
-      res.json({ m: 'invalid email' })
-    }
-  }
-  catch (err) {
-    res.json({ m: err.message })
+  } catch (err) {
+    res.json({ m: err.message });
   }
 };
 
 export const postData = async (req, res) => {
   try {
-    const { name, vid, partno, tel, id,user } = req.body; // Destructure the data fields from the request body
+    const { name, vid, partno, tel, id, user } = req.body; // Destructure the data fields from the request body
 
     // Create a new data object based on the schema
     const newData = {
@@ -78,12 +79,11 @@ export const postData = async (req, res) => {
       vid,
       partno,
       tel,
-  
     };
     // Find the user document by its unique email and update the 'data' field with the new data
     const user1 = await UserModel.findById(id);
     if (!user1) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
 
     user1.data.push(newData); // Add the new data to the user's 'data' array
@@ -91,7 +91,7 @@ export const postData = async (req, res) => {
     // Save the updated user document
     await user1.save();
 
-    res.json({ message: 'Data saved successfully' });
+    res.json({ message: "Data saved successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -115,22 +115,22 @@ export const postData = async (req, res) => {
 // };
 export const voter = async (req, res) => {
   try {
-    const collection = mongoose.connection.db.collection('voterdatas');
+    const collection = mongoose.connection.db.collection("voterdatas");
 
     // Set the response headers for streaming
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Transfer-Encoding", "chunked");
 
     // Use a cursor to stream data
     const cursor = collection.find({}).stream();
 
     let isFirst = true;
 
-    res.write('['); // Start of the JSON array
+    res.write("["); // Start of the JSON array
 
-    cursor.on('data', (doc) => {
+    cursor.on("data", (doc) => {
       if (!isFirst) {
-        res.write(',\n'); // Add a comma and newline separator for subsequent records
+        res.write(",\n"); // Add a comma and newline separator for subsequent records
       } else {
         isFirst = false;
       }
@@ -139,30 +139,29 @@ export const voter = async (req, res) => {
       res.write(JSON.stringify({ m: doc }));
     });
 
-    cursor.on('end', () => {
-      res.write(']'); // End of the JSON array
+    cursor.on("end", () => {
+      res.write("]"); // End of the JSON array
       res.end(); // End the response
     });
 
-    cursor.on('error', (err) => {
+    cursor.on("error", (err) => {
       console.error(err);
       res.end(); // End the response in case of an error
     });
   } catch (err) {
     console.error(err);
-    res.json({ error: 'An error occurred while streaming data.' });
+    res.json({ error: "An error occurred while streaming data." });
   }
 };
-export const vid=async(req,res)=>{
-  const collection = mongoose.connection.db.collection('voterdatas');
-try{
-  const datas=await collection.findOne({EPIC_NO:"YOJ8076895"})
-  res.json({m:datas})
-}
-catch(err){
-  res.json({m:err.message})
-}
-}
+export const vid = async (req, res) => {
+  const collection = mongoose.connection.db.collection("voterdatas");
+  try {
+    const datas = await collection.findOne({ EPIC_NO: "YOJ8076895" });
+    res.json({ m: datas });
+  } catch (err) {
+    res.json({ m: err.message });
+  }
+};
 // export const name=async(req,res)=>{
 //   const{name,vid,partNo,age}=req.body
 //   const collection = mongoose.connection.db.collection('voterdatas');
@@ -192,7 +191,7 @@ catch(err){
 //   res.json({m:err.message,msg:'this is the error message '})
 // }
 // }
-// export const 
+// export const
 // export const name = async (req, res) => {
 //   const { name, vid, partNo, age } = req.body;
 //   const collection = mongoose.connection.db.collection('voterdatas');
@@ -219,8 +218,8 @@ catch(err){
 //   }
 // };
 export const data = async (req, res) => {
-  const {  vid, partNo,house } = req.body;
-  const collection = mongoose.connection.db.collection('voterdatas');
+  const { vid, partNo, house } = req.body;
+  const collection = mongoose.connection.db.collection("voterdatas");
 
   try {
     const query = {}; // Initialize an empty query object
@@ -237,7 +236,7 @@ export const data = async (req, res) => {
     // if (age) {
     //   query.AGE = age;
     // }
-    if(house){
+    if (house) {
       query.C_HOUSE_NO = house;
     }
     // if(gender){
@@ -245,13 +244,30 @@ export const data = async (req, res) => {
     // }
     const result = await collection.find(query).toArray();
     if (result.length > 0) {
-      res.json({ data: result});
+      res.json({ data: result });
     } else {
-      res.json({ data: 'no data found' });
+      res.json({ data: "no data found" });
     }
   } catch (err) {
-    res.status(500).json({ error: err.message, msg: 'An error occurred' });
+    res.status(500).json({ error: err.message, msg: "An error occurred" });
   }
 };
 
+export const formData = async (req, res) => {
+  const oid = req.params.id;
 
+  try {
+    const users = await UserModel.find({ oid }).populate("oid");
+    const responseData = users.map((user) => {
+      if (user.data.length > 0) {
+        return user.data[0]; // Assuming you only want the first data entry
+      } else {
+        return {}; // Return an empty object if there's no data
+      }
+    });
+
+    res.json({ message: "ok", data: responseData });
+  } catch (err) {
+    res.json({ message: "Error occurred while fetching users." });
+  }
+};

@@ -1,35 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const ListOfkaryakartha = () => {
-  const [users, setUsers] = useState<any>([]);
+interface UserData {
+  [x: string]: any;
+  name: string;
+  vid: string;
+  partno: string;
+  tel: string;
+  _id: string;
+}
 
-  const allUsers = async () => {
+function Allforms() {
+  const [userData, setUserData] = useState<UserData[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
     try {
-      const response = await axios.get(`http://localhost:1001/getusers/${localStorage.getItem('id')}`);
-      setUsers(response.data.data[0].data);
-      console.log(users[0].data)
+      const response = await axios.get(`http://localhost:1001/form/${localStorage.getItem('id')}`);
+      const data = response.data.data.filter((item: any) => Object.keys(item).length !== 0); // Filtering out empty objects
+      setUserData(data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
-  useEffect(() => {
-    allUsers();
-  }, []);
+  const navigateToAdminPage = () => {
+    navigate('/admin/page');
+  };
 
   return (
-    <div>
-      {users.map((user:any, index:any) => (
-        <div key={index} className="card">
-          <h2>Name: {user.name}</h2>
-          <p>VID: {user.vid}</p>
-          <p>Part No: {user.partno}</p>
-          <p>Tel: {user.tel}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <h1 style={{ fontSize: '2.5rem', marginBottom: '40px', color: '#333' }}>All Voters Data</h1>
+      {userData.map((user, index) => (
+        <div
+          key={index}
+          style={{
+            width: '300px',
+            padding: '20px',
+            borderRadius: '10px',
+            backgroundColor: 'lightgoldenrodyellow',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            transition: 'transform 0.3s',
+            marginBottom: '20px',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <p style={{ fontSize: '1.4rem', fontWeight: 'bold', color: 'darkorange', marginBottom: '10px' }}>{user.name}</p>
+            <p style={{ fontSize: '1.2rem', color: '#555' }}>VID: {user.vid}</p>
+            <p style={{ fontSize: '1.2rem', color: '#555' }}>Part Number: {user.partno}</p>
+            <p style={{ fontSize: '1.2rem', color: '#555' }}>Telephone: {user.tel}</p>
+          </div>
         </div>
       ))}
+      <button
+        onClick={navigateToAdminPage}
+        style={{
+          backgroundColor: '#ff6f61',
+          color: 'white',
+          fontWeight: 'bold',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '5px',
+          marginTop: '20px',
+        }}
+      >
+        Home
+      </button>
     </div>
   );
-};
+}
 
-export default ListOfkaryakartha;
+export default Allforms;
