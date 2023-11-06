@@ -1,11 +1,11 @@
 import AuthModel from "../models/AuthModel.js";
-import bcrypt from 'bcrypt'
-const secretKey = 'your-secret-key';
-import  Jwt  from "jsonwebtoken";
+import bcrypt from "bcrypt";
+const secretKey = "your-secret-key";
+import Jwt from "jsonwebtoken";
 import UserModel from "../models/UserModel.js";
 
 // Signup Route
-export const AdminsignUp= async (req, res) => {
+export const AdminsignUp = async (req, res) => {
   const { name, email, password, mobile } = req.body;
 
   try {
@@ -13,7 +13,7 @@ export const AdminsignUp= async (req, res) => {
     const existingUser = await AuthModel.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).json({ message: 'Email is already registered.' });
+      return res.status(400).json({ message: "Email is already registered." });
     }
     // Hash the password
     const saltRounds = 10;
@@ -29,56 +29,55 @@ export const AdminsignUp= async (req, res) => {
 
     await newUser.save();
 
-
-    res.status(201).json({m:'ok' });
+    res.status(201).json({ m: "ok" });
   } catch (error) {
-    res.status(500).json({ message:error.message});
+    res.status(500).json({ message: error.message });
   }
 };
 
 // Login Route
-export const AdminLogin= async (req, res) => {
+export const AdminLogin = async (req, res) => {
   const { email, password } = req.body;
-const ifUser=await UserModel.findOne({email})
-  const checkEmail=await AuthModel.findOne({email})
-try{
-  if(checkEmail){
-    let checkPassword=await bcrypt.compare(password,checkEmail.password)
-    if(checkPassword){
-      const token=Jwt.sign({email},secretKey,{expiresIn:'10h'})
-      res.json({m:"ok",token:token,role:'admin',id:checkEmail.id})
-    }
-    else{
-      res.json({m:"wrong password"})
-    }
-  }
-  else if(ifUser){
-    let checkPassword=await bcrypt.compare(password,ifUser.password)
+  const ifUser = await UserModel.findOne({ email });
+  const checkEmail = await AuthModel.findOne({ email });
+  try {
+    if (checkEmail) {
+      let checkPassword = await bcrypt.compare(password, checkEmail.password);
+      if (checkPassword) {
+        const token = Jwt.sign({ email }, secretKey, { expiresIn: "10h" });
+        res.json({
+          m: "ok",
+          token: token,
+          role: "admin",
+          id: checkEmail.id,
+          user: checkEmail.name,
+        });
+      } else {
+        res.json({ m: "wrong password" });
+      }
+    } else if (ifUser) {
+      let checkPassword = await bcrypt.compare(password, ifUser.password);
 
-    if(checkPassword){
-      const token=Jwt.sign({email},secretKey,{expiresIn:'10h'})
-      res.json({m:"ok",token:token,role:'user',id:ifUser.id})
+      if (checkPassword) {
+        const token = Jwt.sign({ email }, secretKey, { expiresIn: "10h" });
+        res.json({ m: "ok", token: token, role: "user", id: ifUser.id });
+      } else {
+        res.json({ m: "wrong password " });
+      }
+    } else {
+      res.json({ m: "invalid email" });
     }
-    else{
-      res.json({m:"wrong password "})
-    }
-
+  } catch (err) {
+    res.json({ m: err.message });
   }
-  else{
-    res.json({m:'invalid email'})
-  }
-}
-catch(err){
-  res.json({m:err.message})
-}
 };
 export const getMyUsers = async (req, res) => {
   const oid = req.params.id;
 
   try {
-    const users = await UserModel.find({ oid }).populate('oid');
-    res.json({ message: 'ok', data: users });
+    const users = await UserModel.find({ oid }).populate("oid");
+    res.json({ message: "ok", data: users });
   } catch (err) {
-    res.json({ message: 'Error occurred while fetching users.' });
+    res.json({ message: "Error occurred while fetching users." });
   }
 };
