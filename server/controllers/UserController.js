@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import AuthModel from "../models/AuthModel.js";
 import UserModel from "../models/UserModel.js";
 import bcrypt from 'bcrypt'
@@ -95,3 +96,162 @@ export const postData = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// export const voter = async (req, res) => {
+//   try {
+//     const collection = mongoose.connection.db.collection('voterdata');
+//     const pageSize = 1000; // Adjust the page size as needed
+
+//     const page = req.query.page || 1; // Get the requested page from the query parameters
+
+//     const skip = (page - 1) * pageSize;
+
+//     const data = await collection.find({}).skip(skip).limit(pageSize).toArray();
+
+//     res.json({ m: data });
+//   } catch (err) {
+//     res.json({ m: err.message });
+//   }
+// };
+export const voter = async (req, res) => {
+  try {
+    const collection = mongoose.connection.db.collection('voterdatas');
+
+    // Set the response headers for streaming
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Transfer-Encoding', 'chunked');
+
+    // Use a cursor to stream data
+    const cursor = collection.find({}).stream();
+
+    let isFirst = true;
+
+    res.write('['); // Start of the JSON array
+
+    cursor.on('data', (doc) => {
+      if (!isFirst) {
+        res.write(',\n'); // Add a comma and newline separator for subsequent records
+      } else {
+        isFirst = false;
+      }
+
+      // Send each document as a separate JSON object
+      res.write(JSON.stringify({ m: doc }));
+    });
+
+    cursor.on('end', () => {
+      res.write(']'); // End of the JSON array
+      res.end(); // End the response
+    });
+
+    cursor.on('error', (err) => {
+      console.error(err);
+      res.end(); // End the response in case of an error
+    });
+  } catch (err) {
+    console.error(err);
+    res.json({ error: 'An error occurred while streaming data.' });
+  }
+};
+export const vid=async(req,res)=>{
+  const collection = mongoose.connection.db.collection('voterdatas');
+try{
+  const datas=await collection.findOne({EPIC_NO:"YOJ8076895"})
+  res.json({m:datas})
+}
+catch(err){
+  res.json({m:err.message})
+}
+}
+// export const name=async(req,res)=>{
+//   const{name,vid,partNo,age}=req.body
+//   const collection = mongoose.connection.db.collection('voterdatas');
+// try{
+//   const userName=await collection.find({NAME:name}).toArray()
+//   const voterid=await collection.find({EPIC_NO:vid}).toArray()
+//   const part=await collection.find({PART_NO:partNo}).toArray()
+//   const userAge=await collection.find({AGE:age}).toArray()
+//  if(userName){
+//   res.json({data:userName})
+//  }
+//  else if(voterid){
+//   res.json({data:voterid})
+//  }
+//  else if(part)
+//  {
+//   res.json({data:part})
+//  }
+//  else if(userAge){
+//   res.json({data:userAge})
+//  }
+//  else{
+//   res.json({data:'no data found'})
+//  }
+// }
+// catch(err){
+//   res.json({m:err.message,msg:'this is the error message '})
+// }
+// }
+// export const 
+// export const name = async (req, res) => {
+//   const { name, vid, partNo, age } = req.body;
+//   const collection = mongoose.connection.db.collection('voterdatas');
+
+//   try {
+//     const userName = await collection.find({ NAME: name }).toArray();
+//     const voterid = await collection.find({ EPIC_NO: vid }).toArray();
+//     const part = await collection.find({ PART_NO: partNo }).toArray();
+//     const userAge = await collection.find({ AGE:age }).toArray();
+
+//     if (userName.length > 0) {
+//      return res.json({ data: userName });
+//     } else if (voterid.length > 0) {
+//     return  res.json({ data: voterid });
+//     } else if (part.length > 0) {
+//     return  res.json({ data: part });
+//     } else if (userAge.length > 0) {
+//     return  res.json({ data: userAge });
+//     } else {
+//      return res.json({ data: 'no data found' });
+//     }
+//   } catch (err) {
+//     res.status(500).json({ error: err.message, msg: 'An error occurred' });
+//   }
+// };
+export const data = async (req, res) => {
+  const {  vid, partNo,house } = req.body;
+  const collection = mongoose.connection.db.collection('voterdatas');
+
+  try {
+    const query = {}; // Initialize an empty query object
+
+    // if (name) {
+    //   query.NAME = name;
+    // }
+    if (vid) {
+      query.EPIC_NO = vid;
+    }
+    if (partNo) {
+      query.PART_NO = partNo;
+    }
+    // if (age) {
+    //   query.AGE = age;
+    // }
+    if(house){
+      query.C_HOUSE_NO = house;
+    }
+    // if(gender){
+    //   query.GENDER=gender
+    // }
+    const result = await collection.find(query).toArray();
+    if (result.length > 0) {
+      res.json({ data: result});
+    } else {
+      res.json({ data: 'no data found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message, msg: 'An error occurred' });
+  }
+};
+
+
