@@ -71,7 +71,7 @@ export const userSignIn = async (req, res) => {
 
 export const postData = async (req, res) => {
   try {
-    const { name, vid, partno, tel, id, user } = req.body; // Destructure the data fields from the request body
+    const { name, vid, partno, tel, user, id } = req.body; // Destructure the data fields from the request body
 
     // Create a new data object based on the schema
     const newData = {
@@ -79,6 +79,8 @@ export const postData = async (req, res) => {
       vid,
       partno,
       tel,
+      user,
+      id,
     };
     // Find the user document by its unique email and update the 'data' field with the new data
     const user1 = await UserModel.findById(id);

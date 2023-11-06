@@ -11,20 +11,20 @@ const UserHome = () => {
   };
 
   return (
-<div
-    style={{
-      height: "100vh",
-      width: '100vw',
-      backgroundImage: `url(${modisanjayImage})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundAttachment: 'fixed', // Ensures the background image stays fixed while the content scrolls
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: '20px', // Add padding to ensure content doesn't touch the border
-      boxSizing: 'border-box', // Include padding and border in the element's total width and height
-    }}
+    <div
+      style={{
+        height: "100vh",
+        width: "100vw",
+        backgroundImage: `url(${modisanjayImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed", // Ensures the background image stays fixed while the content scrolls
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px", // Add padding to ensure content doesn't touch the border
+        boxSizing: "border-box", // Include padding and border in the element's total width and height
+      }}
     >
       <div className="flex flex-col items-center justify-center">
         <div onClick={Logout}>
@@ -53,39 +53,58 @@ const UserHome = () => {
             <p className="text-sm text-gray-500">Get a voter print</p>
           </button>
 
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.7)',
-                padding: '20px',
-                borderRadius: '10px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                margin: '20px',
+                background: "rgba(255, 255, 255, 0.7)",
+                padding: "20px",
+                borderRadius: "10px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                margin: "20px",
               }}
             >
-              <button className="btn home-call-btns" style={{ backgroundColor: 'green', border: 'none' }}>
-                <a href="tel:8977011167" className="text-sm text-white" style={{ textDecoration: 'none' }}>
+              <button
+                className="btn home-call-btns"
+                style={{ backgroundColor: "green", border: "none" }}
+              >
+                <a
+                  href="tel:+91-9652227222"
+                  className="text-sm text-white"
+                  style={{ textDecoration: "none" }}
+                >
                   <i className="fa-solid fa-phone"></i> Call incharge-1
                 </a>
               </button>
             </div>
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.7)',
-                padding: '20px',
-                borderRadius: '10px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                margin: '20px',
+                background: "rgba(255, 255, 255, 0.7)",
+                padding: "20px",
+                borderRadius: "10px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                margin: "20px",
               }}
             >
-              <button className="btn home-call-btns" style={{ backgroundColor: 'green', border: 'none' }}>
-                <a href="tel:8977011167" className="text-sm text-white" style={{ textDecoration: 'none' }}>
+              <button
+                className="btn home-call-btns"
+                style={{ backgroundColor: "green", border: "none" }}
+              >
+                <a
+                  href="tel:+91-9652227222"
+                  className="text-sm text-white"
+                  style={{ textDecoration: "none" }}
+                >
                   <i className="fa-solid fa-phone"></i> Call incharge-2
                 </a>
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
