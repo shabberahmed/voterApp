@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import sanjayImage from "./Sanjay.jpg";
+import modisanjayImage from "./SanjayModi.jpg";
 
 const UserHome = () => {
   const navigate = useNavigate();
@@ -14,12 +14,14 @@ const UserHome = () => {
     <div
       style={{
         height: "100vh",
-        backgroundImage: `url(${sanjayImage})`,
+        width:'100vw',
+        backgroundImage: `url(${modisanjayImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        margin:0
       }}
     >
       <div className="flex flex-col items-center justify-center">

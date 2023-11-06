@@ -8,6 +8,9 @@ import UserPageDataPrint from './components/UserPageDataPrint'
 import AdminPage from './components/AdminPage'
 import ListOfkaryakartha from './components/ListOfkaryakartha'
 import AllKaryakartha from './components/AllKaryakartha'
+import Reportincident from './components/Report-incident'
+import Reportvoter from './components/ReportVoter'
+
 const App = () => {
   return (
     <div>
@@ -21,6 +24,8 @@ const App = () => {
         <Route path='/admin/page' element={<AdminPage/>}></Route>
         <Route path='/user/login' element={<UserHome/>}></Route>
         <Route path='user/signup' element={<UserSignup/>}></Route>
+        <Route path='/report-incident' element={<Reportincident/>}></Route>
+        <Route path='/report-voter' element={<Reportvoter/>}></Route>
         <Route path='/list' element={<ListOfkaryakartha/>}></Route>
         <Route path='/all' element={<AllKaryakartha/>}></Route>
 
